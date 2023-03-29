@@ -5,6 +5,7 @@ edition = "2021"
 authors = ["voidentente <voidentente@paranoici.org>"]
 repository = "https://github.com/voidentente/eprng"
 description = "Extremely Pseudo RNG"
+license = "MIT"
 
 [features]
 default = ["distribution"]
