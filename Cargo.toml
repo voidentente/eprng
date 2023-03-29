@@ -1,0 +1,11 @@
+[package]
+name = "eprng"
+version = "0.1.0"
+edition = "2021"
+authors = ["voidentente <voidentente@paranoici.org>"]
+repository = "https://github.com/voidentente/eprng"
+description = "Extremely Pseudo RNG"
+
+[features]
+default = ["distribution"]
+distribution = []
