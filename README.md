@@ -1,6 +1,10 @@
 <br>
 <p align="center">
-    <img src="assets/light.svg#gh-dark-mode-only" height="50"/><img src="assets/dark.svg#gh-light-mode-only" height="50"/>
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/voidentente/eprng/main/assets/light.svg">
+        <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/voidentente/eprng/main/assets/dark.svg">
+        <img alt="EPRNG" src="https://user-images.githubusercontent.com/25423296/163456779-a8556205-d0a5-45e2-ac17-42d089e3c3f8.png">
+    </picture>
 </p>
 
 ## What
