@@ -11,35 +11,193 @@
 
 This is not a pseudorandom number generator.
 
-This is an _extremely_ pseudorandom number generator.
+It is `#![no_std]` by nature with only `core` as dependency, and `alloc` if you use the informational feature `distribution`.
 
-It trades in equal distribution with compactness, portability, and performance.
-
-It is `#![no_std]` by nature with only `core` as dependency, and `alloc` if you
-use the feature `distribution`.
-
-EPRNG can fill buffers with bytes and digit chars in bases up to 36.
+The generator can be seeded with the raw value of a pointer for semi-randomness.
 
 You should take a look at the generator's distributions to see if this works for you.
 
-## How
+## Distributions
 
-The generators are seeded with a pointer that is taken by value.
-
-The "source of entropy" is therefore implicitly given by the runtime.
-
-Basically, the generators count the zeros in the pointer, and count the pointer up.
-
-The pointer is never dereferenced however, which is why calling it a pointer is misleading.
-
-This is why it is called "offset", as it continues to travel down the stack.
-
-In order to continuously get new entropy, the offset must be mutated in some way;
-
-Often, it is not enough to call `initial_offset()` again and call it a day, since
-
-it might very likely return the exact same offset.
-
-In fact, it is very possible that the same offset is returned when restarting the
-
-same process! As such, it is a very naive PRNG.
+<table>
+    <tr>
+        <td style="text-align:center;">Seed</td>
+        <td style="text-align:center;">Digits (Base 10)</td>
+        <td style="text-align:center;">Bytes</td>
+    </tr>
+    <tr>
+        <td>0x00000000</td>
+        <td>
+            <pre>
+                              ███
+▄▄▄                       ▄▄▄ ███
+███                       ███ ███
+███                       ███ ███
+███                       ███ ███
+███ ███               ███ ███ ███
+███ ███               ███ ███ ███
+███ ███               ███ ███ ███
+███ ███ ██         ██ ███ ███ ███
+███ ███ ██ ▄▄ ▄ ▄▄ ██ ███ ███ ███
+0   1   2  3  4 5  6  7   8   9
+210 120 45 10 2 10 45 120 210 252
+            </pre>
+        </td>
+        <td>
+            <pre>
+                 ███
+             ▄▄▄ ███ ▄▄▄
+             ███ ███ ███
+             ███ ███ ███
+             ███ ███ ███
+         ███ ███ ███ ███ ███
+         ███ ███ ███ ███ ███
+         ███ ███ ███ ███ ███
+      ██ ███ ███ ███ ███ ███ ██
+▄▄ ▄▄ ██ ███ ███ ███ ███ ███ ██ ▄▄ ▄▄
+54 55 56 57  58  59  60  61  62 63 64
+1  10 45 120 210 252 210 120 45 10 1
+            </pre>
+        </td>
+    </tr>
+    <tr>
+        <td>0x0000FFFF</td>
+        <td>
+            <pre>
+                          ███
+                      ▄▄▄ ███ ▄▄▄
+                      ███ ███ ███
+                      ███ ███ ███
+                      ███ ███ ███
+███               ███ ███ ███ ███
+███               ███ ███ ███ ███
+███               ███ ███ ███ ███
+███ ██         ██ ███ ███ ███ ███
+███ ██ ▄▄ ▄ ▄▄ ██ ███ ███ ███ ███
+0   1  2  3 4  5  6   7   8   9
+120 45 11 1 10 45 120 210 252 210
+            </pre>
+        </td>
+        <td>
+            <pre>
+                 ███
+             ▄▄▄ ███ ▄▄▄
+             ███ ███ ███
+             ███ ███ ███
+             ███ ███ ███
+         ███ ███ ███ ███ ███
+         ███ ███ ███ ███ ███
+         ███ ███ ███ ███ ███
+      ██ ███ ███ ███ ███ ███ ██
+▄▄ ▄▄ ██ ███ ███ ███ ███ ███ ██ ▄▄ ▄▄
+48 54 55 56  57  58  59  60  61 62 63
+1  10 45 120 210 252 210 120 45 10 1
+            </pre>
+        </td>
+    </tr>
+    <tr>
+        <td>0xFFFF0000</td>
+        <td>
+            <pre>
+                      ███
+                  ▄▄▄ ███ ▄▄▄
+                  ███ ███ ███
+                  ███ ███ ███
+                  ███ ███ ███
+              ███ ███ ███ ███ ███
+              ███ ███ ███ ███ ███
+              ███ ███ ███ ███ ███
+██         ██ ███ ███ ███ ███ ███
+██ ▄▄ ▄ ▄▄ ██ ███ ███ ███ ███ ███
+0  1  2 3  4  5   6   7   8   9
+45 10 2 10 45 120 210 252 210 120
+            </pre>
+        </td>
+        <td>
+            <pre>
+                 ███
+             ▄▄▄ ███ ▄▄▄
+             ███ ███ ███
+             ███ ███ ███
+             ███ ███ ███
+         ███ ███ ███ ███ ███
+         ███ ███ ███ ███ ███
+         ███ ███ ███ ███ ███
+      ██ ███ ███ ███ ███ ███ ██
+▄▄ ▄▄ ██ ███ ███ ███ ███ ███ ██ ▄▄ ▄▄
+38 39 40 41  42  43  44  45  46 47 48
+1  10 45 120 210 252 210 120 45 10 1
+            </pre>
+        </td>
+    </tr>
+    <tr>
+        <td>0xFFFFFFFF</td>
+        <td>
+            <pre>
+                              ███
+▄▄▄                       ▄▄▄ ███
+███                       ███ ███
+███                       ███ ███
+███                       ███ ███
+███ ███               ███ ███ ███
+███ ███               ███ ███ ███
+███ ███               ███ ███ ███
+███ ███ ██         ██ ███ ███ ███
+███ ███ ██ ▄▄ ▄ ▄▄ ██ ███ ███ ███
+0   1   2  3  4 5  6  7   8   9
+211 120 45 10 1 10 45 120 210 252
+            </pre>
+        </td>
+        <td>
+            <pre>
+                 ███
+             ▄▄▄ ███ ▄▄▄
+             ███ ███ ███
+             ███ ███ ███
+             ███ ███ ███
+         ███ ███ ███ ███ ███
+         ███ ███ ███ ███ ███
+         ███ ███ ███ ███ ███
+      ██ ███ ███ ███ ███ ███ ██
+▄▄ ▄▄ ██ ███ ███ ███ ███ ███ ██ ▄▄ ▄▄
+32 54 55 56  57  58  59  60  61 62 63
+1  10 45 120 210 252 210 120 45 10 1
+            </pre>
+        </td>
+    </tr>
+    <tr>
+        <td>Random Pointer</td>
+        <td>
+            <pre>
+          ███
+          ███ ███
+      ▄▄▄ ███ ███
+      ███ ███ ███
+      ███ ███ ███ ▄▄▄
+      ███ ███ ███ ███
+   ▄▄ ███ ███ ███ ███
+   ██ ███ ███ ███ ███
+   ██ ███ ███ ███ ███ ██
+██ ██ ███ ███ ███ ███ ██ ▄▄ ▄ ▄
+0  1  2   3   4   5   6  7  8 9
+20 85 196 273 243 141 52 11 1 2
+            </pre>
+        </td>
+        <td>
+            <pre>
+             ▄▄▄ ███
+             ███ ███
+             ███ ███
+             ███ ███ ███
+         ▄▄▄ ███ ███ ███
+         ███ ███ ███ ███
+         ███ ███ ███ ███
+         ███ ███ ███ ███ ██
+      ██ ███ ███ ███ ███ ██
+▄▄ ▄▄ ██ ███ ███ ███ ███ ██ ██ ▄▄
+27 28 29 30  31  32  33  34 35 36
+1  11 53 145 248 273 191 81 19 2
+            </pre>
+        </td>
+    </tr>
+</table>

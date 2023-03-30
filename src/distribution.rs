@@ -1,8 +1,8 @@
 extern crate alloc;
 
-use core::fmt;
 use alloc::collections::BTreeMap;
 use alloc::string::String;
+use core::fmt;
 
 type DistributionMap<T> = BTreeMap<T, usize>;
 
@@ -22,8 +22,8 @@ pub struct Distribution<T>(pub DistributionMap<T>);
 /// println!("{distribution}");
 /// ```
 pub fn distribution<T: Ord + Copy>(buf: &[T]) -> Distribution<T> {
-    let mut tree = BTreeMap::<T, usize>::new();
-    for val in buf  {
+    let mut tree = DistributionMap::<T>::new();
+    for val in buf {
         if let Some(entry) = tree.get_mut(val) {
             *entry += 1;
         } else {

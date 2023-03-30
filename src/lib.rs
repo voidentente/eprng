@@ -1,4 +1,4 @@
-#![no_std]
+//#![no_std]
 
 #[cfg(feature = "distribution")]
 pub mod distribution;
@@ -73,6 +73,20 @@ mod tests {
     }
 
     #[test]
+    fn transparency() {
+        // Adding 32 to this offset keeps the amounts of zeros exactly the same in the range we are inspecting!
+        let offset = 0b000000000_00000000_1111111_11110111_00001100_00100101_01100100_10100000;
+
+        let mut buf1 = ['\0'; 32];
+        digit_chars(&mut buf1, offset, 10);
+
+        let mut buf2 = ['\0'; 32];
+        digit_chars(&mut buf2, offset + 32, 10);
+
+        assert_eq!(buf1, buf2);
+    }
+
+    #[test]
     fn ne() {
         let offset = initial_offset();
 
@@ -80,7 +94,7 @@ mod tests {
         digit_chars(&mut buf1, offset, 10);
 
         let mut buf2 = ['\0'; 32];
-        digit_chars(&mut buf2, offset + 32, 10);
+        digit_chars(&mut buf2, offset + 0xF0F0, 10);
 
         assert_ne!(buf1, buf2);
     }
